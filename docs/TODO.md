@@ -1,0 +1,5 @@
+- view restaurants and menu items [ assume the details/data ]
+- create an order and add food items
+- checkout cart and pay using existing payment method
+- cancel order
+- modify payment method
