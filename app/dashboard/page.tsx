@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCartStore } from "@/lib/store/cartStore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import {
   getRoleLabel,
   hasElevatedRole,
@@ -14,7 +14,7 @@ import {
   User,
 } from "@/lib/rbac";
 
-export default function Dashboard() {
+function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { getTotalItems } = useCartStore();
@@ -516,5 +516,20 @@ export default function Dashboard() {
         </Card>
       </main>
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⚡</div>
+          <p className="text-lg text-neutral-600">Loading dashboard...</p>
+        </div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }
