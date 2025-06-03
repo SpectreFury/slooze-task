@@ -12,10 +12,8 @@ import { canPlaceOrder, canAccessCheckout, User } from "@/lib/rbac";
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCartStore();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-    // Form state
   const [cardNumber, setCardNumber] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
@@ -25,20 +23,16 @@ export default function CheckoutPage() {
   const [zipCode, setZipCode] = useState("");
   const [savePaymentInfo, setSavePaymentInfo] = useState(false);
   const [savedPaymentLoaded, setSavedPaymentLoaded] = useState(false);
-
   const totalPrice = getTotalPrice();
-  const finalTotal = totalPrice + 2.99 + 1.99; // Including delivery and service fees
+  const finalTotal = totalPrice + 2.99 + 1.99;
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await fetch("/api/auth/me");
-        if (response.ok) {
+        const response = await fetch("/api/auth/me");        if (response.ok) {
           const data = await response.json();
           setUser(data.user);
-          // Pre-fill card name with user's full name
           setCardName(`${data.user.firstName} ${data.user.lastName}`);
           
-          // Load saved payment information
           await loadSavedPaymentInfo();
         } else {
           console.error("Failed to fetch user data");
@@ -61,12 +55,9 @@ export default function CheckoutPage() {
       if (response.ok) {
         const data = await response.json();
         const paymentInfo = data.paymentInfo;
-        
-        if (paymentInfo && Object.keys(paymentInfo).length > 0) {
-          // Auto-populate form with saved data
+          if (paymentInfo && Object.keys(paymentInfo).length > 0) {
           if (paymentInfo.cardName) setCardName(paymentInfo.cardName);
           if (paymentInfo.cardNumber) {
-            // Show only last 4 digits with asterisks
             setCardNumber(`**** **** **** ${paymentInfo.cardNumber}`);
           }
           if (paymentInfo.expiryDate) setExpiryDate(paymentInfo.expiryDate);
@@ -81,8 +72,6 @@ export default function CheckoutPage() {
       console.error("Error loading saved payment info:", error);
     }
   };
-
-  // Redirect if no items in cart
   useEffect(() => {
     if (!loading && items.length === 0) {
       router.push("/cart");
@@ -99,14 +88,11 @@ export default function CheckoutPage() {
       return;
     }
 
-    setSubmitting(true);
-
-    try {
-      // Save payment information if checkbox is checked
+    setSubmitting(true);    try {
       if (savePaymentInfo) {
         const paymentData = {
           cardName,
-          cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces for saving
+          cardNumber: cardNumber.replace(/\s/g, ''),
           expiryDate,
           address,
           city,
@@ -136,12 +122,10 @@ export default function CheckoutPage() {
           price: item.price,
           quantity: item.quantity,
           restaurantName: item.restaurantName
-        })),
-        paymentDetails: {
-          cardNumber: cardNumber.replace(/\s/g, ''), // Remove spaces
+        })),        paymentDetails: {
+          cardNumber: cardNumber.replace(/\s/g, ''),
           cardName,
           expiryDate,
-          // Don't store CVV for security (even in dummy implementation)
         },
         deliveryAddress: {
           address,
@@ -167,7 +151,6 @@ export default function CheckoutPage() {
       });      if (response.ok) {
         const data = await response.json();
         clearCart();
-        // Redirect to dashboard with success parameter to show orders
         router.push("/dashboard?orderSuccess=true");
       } else {
         const errorData = await response.json();
@@ -179,10 +162,7 @@ export default function CheckoutPage() {
     } finally {
       setSubmitting(false);
     }
-  };
-  // Format card number with spaces
-  const handleCardNumberChange = (value: string) => {
-    // If saved payment is loaded and user is editing, clear the asterisks
+  };  const handleCardNumberChange = (value: string) => {
     if (savedPaymentLoaded && value.includes('*')) {
       setSavedPaymentLoaded(false);
       setCardNumber('');
@@ -191,12 +171,10 @@ export default function CheckoutPage() {
     
     const cleaned = value.replace(/\s/g, '');
     const formatted = cleaned.replace(/(.{4})/g, '$1 ').trim();
-    if (formatted.length <= 19) { // 16 digits + 3 spaces
+    if (formatted.length <= 19) {
       setCardNumber(formatted);
     }
   };
-
-  // Format expiry date MM/YY
   const handleExpiryChange = (value: string) => {
     const cleaned = value.replace(/\D/g, '');
     if (cleaned.length >= 2) {
@@ -243,7 +221,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
+      
       <header className="bg-white border-b border-neutral-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
@@ -255,13 +233,13 @@ export default function CheckoutPage() {
         </div>
       </header>
 
-      {/* Main Content */}
+      
       <main className="max-w-4xl mx-auto px-6 py-8">
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Checkout Form */}
+            
             <div className="lg:col-span-2 space-y-6">
-              {/* Payment Information */}
+              
               <Card>
                 <CardHeader>
                   <CardTitle>Payment Information</CardTitle>
@@ -315,7 +293,7 @@ export default function CheckoutPage() {
                     />
                   </div>
                   
-                  {/* Save Payment Info Checkbox */}
+                  
                   <div className="flex items-center space-x-2">
                     <input
                       id="savePaymentInfo"
@@ -340,7 +318,7 @@ export default function CheckoutPage() {
                 </CardContent>
               </Card>
 
-              {/* Delivery Address */}
+              
               <Card>
                 <CardHeader>
                   <CardTitle>Delivery Address</CardTitle>
@@ -385,14 +363,14 @@ export default function CheckoutPage() {
               </Card>
             </div>
 
-            {/* Order Summary */}
+            
             <div className="lg:col-span-1">
               <Card className="sticky top-4">
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Order Items */}
+                  
                   <div className="space-y-2">
                     {items.map((item) => (
                       <div key={item.id} className="flex justify-between text-sm">

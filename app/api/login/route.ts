@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "User was not found" }, { status: 401 });
   }
 
-  // Compare the password with the hashed password in the database
+  
   const isPasswordValid = await compare(password, user.password);
 
   if (!isPasswordValid) {
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         status: 401,
       }
     );
-  }  // Generate a JWT token using jose
+  }  
   const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
   const token = await new SignJWT({
     userId: user._id.toString(),
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     .setIssuedAt()
     .sign(secret);
 
-  // Send the jwt as a cookie
+  
   const response = NextResponse.json({
     message: "Login successful",
     user: {
@@ -53,12 +53,12 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Set the JWT token as an HTTP-only cookie
+  
   response.cookies.set("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
+    maxAge: 7 * 24 * 60 * 60, 
     path: "/",
   });
 

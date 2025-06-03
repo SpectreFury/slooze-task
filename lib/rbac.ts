@@ -1,17 +1,14 @@
-// Role-based access control utilities
-
 export type UserRole = "member" | "manager" | "admin";
 
 export interface User {
   id: string;
-  userId?: string; // Keep for backward compatibility
+  userId?: string;
   email: string;
   firstName: string;
   lastName: string;
   role: UserRole;
 }
 
-// Define permissions for each role
 export const ROLE_PERMISSIONS = {
   member: [
     "view_restaurants",
@@ -48,7 +45,6 @@ export const ROLE_PERMISSIONS = {
 
 export type Permission = typeof ROLE_PERMISSIONS[keyof typeof ROLE_PERMISSIONS][number];
 
-// Check if user has a specific permission
 export function hasPermission(
   userRole: UserRole,
   permission: Permission
@@ -59,47 +55,38 @@ export function hasPermission(
   return (ROLE_PERMISSIONS[userRole] as readonly Permission[]).includes(permission);
 }
 
-// Check if user can access restaurants
 export function canViewRestaurants(userRole: UserRole): boolean {
   return hasPermission(userRole, "view_restaurants");
 }
 
-// Check if user can view menu items
 export function canViewMenu(userRole: UserRole): boolean {
   return hasPermission(userRole, "view_menu");
 }
 
-// Check if user can add items to cart
 export function canAddToCart(userRole: UserRole): boolean {
   return hasPermission(userRole, "add_to_cart");
 }
 
-// Check if user can place orders
 export function canPlaceOrder(userRole: UserRole): boolean {
   return hasPermission(userRole, "place_order");
 }
 
-// Check if user can access checkout (only managers and admins)
 export function canAccessCheckout(userRole: UserRole): boolean {
   return hasPermission(userRole, "place_order");
 }
 
-// Check if user can cancel orders (only managers and admins)
 export function canCancelOrder(userRole: UserRole): boolean {
   return hasPermission(userRole, "cancel_order");
 }
 
-// Check if user can manage restaurants (for restaurant owners/managers)
 export function canManageRestaurant(userRole: UserRole): boolean {
   return hasPermission(userRole, "manage_restaurant");
 }
 
-// Check if user can manage menus
 export function canManageMenu(userRole: UserRole): boolean {
   return hasPermission(userRole, "manage_menu");
 }
 
-// Get user role label for display
 export function getRoleLabel(role: UserRole): string {
   if (!role) {
     return "Unknown";
@@ -112,7 +99,6 @@ export function getRoleLabel(role: UserRole): string {
   return labels[role] || "Unknown";
 }
 
-// Check if user has elevated privileges (manager or admin)
 export function hasElevatedRole(userRole: UserRole): boolean {
   if (!userRole) {
     return false;

@@ -3,19 +3,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useCartStore } from "@/lib/store/cartStore";
 import { useEffect, useState } from "react";
 import { canViewMenu, canAddToCart, User } from "@/lib/rbac";
 
-interface RestaurantMenuProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function RestaurantMenuPage({ params }: RestaurantMenuProps) {
+export default function RestaurantMenuPage() {
   const router = useRouter();
+  const params = useParams();
+  const restaurantId = params.id as string;
   const { addItem, getTotalItems } = useCartStore();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,23 +22,18 @@ export default function RestaurantMenuPage({ params }: RestaurantMenuProps) {
 
   const handleViewCart = () => {
     router.push("/cart");
-  };
-  const handleLogout = () => {
+  };  const handleLogout = () => {
     document.cookie = "token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
     router.push("/login");
   };
 
-  // Fetch user data and check permissions
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await fetch("/api/auth/me");
-
-        if (response.ok) {
+        const response = await fetch("/api/auth/me");        if (response.ok) {
           const userData = await response.json();
           setUser(userData.user);
 
-          // Check if user has permission to view menu
           if (!canViewMenu(userData.user.role)) {
             router.push("/restaurants");
             return;
@@ -59,12 +50,10 @@ export default function RestaurantMenuPage({ params }: RestaurantMenuProps) {
       }
     };
 
-    getUser();
-  }, [router]);
+    getUser();  }, [router]);
 
-  // Mock restaurant data - in real app this would come from API
   const restaurant = {
-    id: parseInt(params.id),
+    id: parseInt(restaurantId),
     name: "Pizza Palace",
     cuisine: "Italian",
     rating: 4.5,
@@ -148,10 +137,8 @@ export default function RestaurantMenuPage({ params }: RestaurantMenuProps) {
       image: item.image,
     });
   };
-
   const totalCartItems = getTotalItems();
 
-  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
@@ -160,10 +147,8 @@ export default function RestaurantMenuPage({ params }: RestaurantMenuProps) {
           <p className="text-lg text-neutral-600">Loading menu...</p>
         </div>
       </div>
-    );
-  }
+    );  }
 
-  // Check user permissions
   if (!user || !canViewMenu(user.role)) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
@@ -185,7 +170,7 @@ export default function RestaurantMenuPage({ params }: RestaurantMenuProps) {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
+      
       <header className="bg-white border-b border-neutral-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
@@ -206,12 +191,7 @@ export default function RestaurantMenuPage({ params }: RestaurantMenuProps) {
               Logout
             </Button>
           </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Restaurant Info */}
+        </div>      </header>      <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="bg-white rounded-lg p-6 mb-8 border border-neutral-200">
           <div className="flex items-start space-x-4">
             <div className="text-6xl">{restaurant.image}</div>
@@ -233,10 +213,8 @@ export default function RestaurantMenuPage({ params }: RestaurantMenuProps) {
                 <span className="text-neutral-600">{restaurant.cuisine}</span>
               </div>
             </div>
-          </div>
-        </div>
+          </div>        </div>
 
-        {/* Category Filters */}
         <div className="flex flex-wrap gap-2 mb-8">
           {categories.map((category) => (
             <Button
@@ -246,10 +224,8 @@ export default function RestaurantMenuPage({ params }: RestaurantMenuProps) {
             >
               {category}
             </Button>
-          ))}
-        </div>
+          ))}        </div>
 
-        {/* Menu Items */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {menuItems.map((item) => (
             <Card key={item.id} className="hover:shadow-lg transition-shadow">

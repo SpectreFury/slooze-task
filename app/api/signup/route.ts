@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       { status: 409 }
     );
   }
-  // Hash the password before saving
+  
   const hashedPassword = await hash(password, 10);
 
   const user = await User.create({

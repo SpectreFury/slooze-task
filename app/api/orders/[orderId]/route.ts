@@ -17,13 +17,10 @@ export async function GET(
     await dbConnect();
 
     const { orderId } = await params;
-    const order = await Order.findById(orderId);
-
-    if (!order) {
+    const order = await Order.findById(orderId);    if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    // Check if user owns this order
     if (order.userId !== user.userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface OrderDetails {
@@ -26,15 +26,16 @@ interface OrderDetails {
   };
 }
 
-export default function OrderConfirmationPage({ params }: { params: { orderId: string } }) {
+export default function OrderConfirmationPage() {
   const router = useRouter();
+  const params = useParams();
+  const orderId = params.orderId as string;
   const [order, setOrder] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const response = await fetch(`/api/orders/${params.orderId}`);
+        const response = await fetch(`/api/orders/${orderId}`);
         if (response.ok) {
           const data = await response.json();
           setOrder(data.order);
@@ -50,10 +51,10 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
       }
     };
 
-    if (params.orderId) {
+    if (orderId) {
       fetchOrder();
     }
-  }, [params.orderId, router]);
+  }, [orderId, router]);
 
   if (loading) {
     return (
@@ -82,19 +83,21 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
+      
       <header className="bg-white border-b border-neutral-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-neutral-900">Order Confirmation</h1>
+          <h1 className="text-2xl font-bold text-neutral-900">
+            Order Confirmation
+          </h1>
           <Button onClick={() => router.push("/dashboard")} variant="outline">
             Go to Dashboard
           </Button>
         </div>
       </header>
 
-      {/* Main Content */}
+      
       <main className="max-w-4xl mx-auto px-6 py-8">
-        {/* Success Message */}
+        
         <div className="text-center mb-8">
           <div className="text-8xl mb-4">🎉</div>
           <h2 className="text-3xl font-bold text-neutral-900 mb-2">
@@ -109,7 +112,7 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Order Details */}
+          
           <Card>
             <CardHeader>
               <CardTitle>Order Details</CardTitle>
@@ -117,17 +120,26 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 {order.items.map((item) => (
-                  <div key={item.id} className="flex justify-between items-start">
+                  <div
+                    key={item.id}
+                    className="flex justify-between items-start"
+                  >
                     <div>
                       <h4 className="font-medium">{item.name}</h4>
-                      <p className="text-sm text-neutral-600">from {item.restaurantName}</p>
-                      <p className="text-sm text-neutral-500">Quantity: {item.quantity}</p>
+                      <p className="text-sm text-neutral-600">
+                        from {item.restaurantName}
+                      </p>
+                      <p className="text-sm text-neutral-500">
+                        Quantity: {item.quantity}
+                      </p>
                     </div>
-                    <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-medium">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </p>
                   </div>
                 ))}
               </div>
-              
+
               <div className="border-t pt-4">
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
@@ -137,32 +149,38 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
             </CardContent>
           </Card>
 
-          {/* Delivery Information */}
+          
           <Card>
             <CardHeader>
               <CardTitle>Delivery Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h4 className="font-medium text-neutral-900">Delivery Address</h4>
+                <h4 className="font-medium text-neutral-900">
+                  Delivery Address
+                </h4>
                 <p className="text-neutral-600">
-                  {order.deliveryAddress.address}<br />
+                  {order.deliveryAddress.address}
+                  <br />
                   {order.deliveryAddress.city}, {order.deliveryAddress.zipCode}
                 </p>
               </div>
-              
+
               <div>
-                <h4 className="font-medium text-neutral-900">Estimated Delivery</h4>
+                <h4 className="font-medium text-neutral-900">
+                  Estimated Delivery
+                </h4>
                 <p className="text-neutral-600">25-35 minutes</p>
               </div>
-              
+
               <div>
                 <h4 className="font-medium text-neutral-900">Order Status</h4>
                 <Badge className="bg-blue-100 text-blue-800">
-                  {order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('_', ' ')}
+                  {order.status.charAt(0).toUpperCase() +
+                    order.status.slice(1).replace("_", " ")}
                 </Badge>
               </div>
-              
+
               <div>
                 <h4 className="font-medium text-neutral-900">Order Date</h4>
                 <p className="text-neutral-600">
@@ -173,12 +191,16 @@ export default function OrderConfirmationPage({ params }: { params: { orderId: s
           </Card>
         </div>
 
-        {/* Action Buttons */}
+        
         <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center">
           <Button onClick={() => router.push("/restaurants")} size="lg">
             Order Again
           </Button>
-          <Button onClick={() => router.push("/dashboard")} variant="outline" size="lg">
+          <Button
+            onClick={() => router.push("/dashboard")}
+            variant="outline"
+            size="lg"
+          >
             Go to Dashboard
           </Button>
         </div>

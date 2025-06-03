@@ -10,28 +10,22 @@ interface JWTPayload {
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip authentication for public routes
   const publicRoutes = ["/login", "/signup", "/api/login", "/api/signup", "/"];
 
   if (publicRoutes.includes(pathname)) {
     return NextResponse.next();
   }
 
-  // Get token from cookies
   const token = request.cookies.get("token")?.value;
   console.log("Token:", token);
-
   if (!token) {
-    // Redirect to login if no token
     return NextResponse.redirect(new URL("/login", request.url));
   }
   try {
-    // Verify the JWT token using jose
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
     const { payload } = await jwtVerify(token, secret);
     const decoded = payload as unknown as JWTPayload;
 
-    // Add user info to request headers for use in API routes
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-user-id", decoded.userId);
     requestHeaders.set("x-user-email", decoded.email);
@@ -40,10 +34,8 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.next({
       request: {
         headers: requestHeaders,
-      },
-    });
+      },    });
   } catch (error) {
-    // Token is invalid, redirect to login
     console.error("Invalid token:", error);
     return NextResponse.redirect(new URL("/login", request.url));
   }

@@ -48,10 +48,8 @@ export default function RestaurantsPage() {
 
     getUser();
   }, [router]);
-
   const totalCartItems = getTotalItems();
 
-  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
@@ -63,7 +61,6 @@ export default function RestaurantsPage() {
     );
   }
 
-  // Check user permissions
   if (!user || !canViewRestaurants(user.role)) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
@@ -145,10 +142,8 @@ export default function RestaurantsPage() {
       description: "Handmade pasta and classic Italian sauces",
     },
   ];
-
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}{" "}
       <header className="bg-white border-b border-neutral-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
@@ -167,36 +162,23 @@ export default function RestaurantsPage() {
               Logout
             </Button>
           </div>
-        </div>
-      </header>
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Search and Filters */}
+        </div>      </header>      <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-neutral-900 mb-4">
-            Order from your favorite restaurants
-          </h2>
+            Order from your favorite restaurants          </h2>
 
-          {/* Search Bar */}
           <div className="mb-6">
             <Input
               placeholder="Search restaurants, cuisines, or dishes..."
               className="max-w-md"
-            />
-          </div>
+            />          </div>        </div>
 
-          {/* Category Filters */}
-        </div>
-
-        {/* Stats Bar */}
         <div className="bg-white rounded-lg p-4 mb-8 border border-neutral-200">
           <div className="flex items-center justify-between text-sm text-neutral-600">
             <span>Showing {restaurants.length} restaurants</span>
             <span>Average delivery time: 25 minutes</span>
-          </div>
-        </div>
+          </div>        </div>
 
-        {/* Restaurant Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {restaurants.map((restaurant) => (
             <Card

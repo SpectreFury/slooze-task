@@ -60,10 +60,7 @@ export default function OrdersPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ orderId }),
-      });
-
-      if (response.ok) {
-        // Update the order status in the local state
+      });      if (response.ok) {
         setOrders(prevOrders =>
           prevOrders.map(order =>
             order.id === orderId
@@ -71,7 +68,6 @@ export default function OrdersPage() {
               : order
           )
         );
-        // Optionally refresh orders from server
         await fetchOrders();
       } else {
         const errorData = await response.json();
@@ -124,7 +120,7 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
+      
       <header className="bg-white border-b border-neutral-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
@@ -136,7 +132,7 @@ export default function OrdersPage() {
         </div>
       </header>
 
-      {/* Main Content */}
+      
       <main className="max-w-4xl mx-auto px-6 py-8">
         {orders.length === 0 ? (
           <Card>
@@ -177,7 +173,7 @@ export default function OrdersPage() {
                           {formatDate(order.orderDate)}
                         </p>
                       </div>
-                      {/* Cancel button for managers and admins */}
+                      
                       {user && canCancelOrder(user.role) && order.status !== "delivered" && order.status !== "cancelled" && (
                         <Button
                           variant="outline"
@@ -194,7 +190,7 @@ export default function OrdersPage() {
                 </CardHeader>
                 <CardContent className="pt-6">
                   <div className="space-y-4">
-                    {/* Order Items */}
+                    
                     <div>
                       <h4 className="font-medium text-neutral-900 mb-2">Items Ordered:</h4>
                       <div className="space-y-2">
@@ -211,7 +207,7 @@ export default function OrdersPage() {
                       </div>
                     </div>
 
-                    {/* Delivery Address */}
+                    
                     {order.deliveryAddress && (
                       <div>
                         <h4 className="font-medium text-neutral-900 mb-2">Delivery Address:</h4>
@@ -221,7 +217,7 @@ export default function OrdersPage() {
                       </div>
                     )}
 
-                    {/* Order Total */}
+                    
                     <div className="border-t pt-4">
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-medium text-neutral-900">Total:</span>

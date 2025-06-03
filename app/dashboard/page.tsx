@@ -34,9 +34,7 @@ export default function Dashboard() {
   const handleViewCart = () => {
     router.push("/cart");
   };
-
   const handleLogout = () => {
-    // Clear cookies and redirect to login
     document.cookie = "token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
     router.push("/login");
   };
@@ -47,7 +45,6 @@ export default function Dashboard() {
         if (response.ok) {
           const data = await response.json();
           setUser(data.user);
-          // Fetch orders after getting user data
           await fetchOrders();
         } else {
           console.error("Failed to fetch user data");
@@ -60,15 +57,13 @@ export default function Dashboard() {
         setLoading(false);
       }
     };
-    getUser(); // Check if redirected from successful order
+    getUser();
     if (searchParams.get("orderSuccess") === "true") {
       setShowOrderSuccess(true);
-      // Refresh orders when coming from successful checkout
       setTimeout(async () => {
         await fetchOrders();
       }, 1000);
 
-      // Clear the URL parameter after showing the message
       setTimeout(() => {
         setShowOrderSuccess(false);
         const url = new URL(window.location.href);
@@ -107,15 +102,12 @@ export default function Dashboard() {
         },
         body: JSON.stringify({ orderId }),
       });
-
       if (response.ok) {
-        // Update the order status in the local state
         setOrders((prevOrders) =>
           prevOrders.map((order) =>
             order.id === orderId ? { ...order, status: "cancelled" } : order
           )
         );
-        // Optionally refresh orders from server
         await fetchOrders();
       } else {
         const errorData = await response.json();
@@ -158,7 +150,6 @@ export default function Dashboard() {
 
   const totalCartItems = getTotalItems();
 
-  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
@@ -175,7 +166,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}{" "}
       <header className="bg-white border-b border-neutral-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <h1 className="text-2xl font-bold text-neutral-900">
@@ -193,9 +183,7 @@ export default function Dashboard() {
           </div>
         </div>
       </header>{" "}
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Order Success Message */}
         {showOrderSuccess && (
           <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
             <div className="flex items-center">
@@ -211,7 +199,6 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-        {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-neutral-900 mb-2">
             Welcome back, {user.firstName}!
@@ -223,7 +210,6 @@ export default function Dashboard() {
             {getRoleLabel(user.role)}
           </Badge>
         </div>
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {" "}
           {user.role === "member" && (
@@ -374,7 +360,6 @@ export default function Dashboard() {
             </>
           )}
         </div>
-        {/* Quick Actions */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
@@ -417,12 +402,10 @@ export default function Dashboard() {
                   <span className="text-lg">📋</span>
                   <span>View Orders</span>
                 </Button>
-              )}{" "}
-              <Button
+              )}{" "}              <Button
                 variant="outline"
                 className="h-20 flex flex-col space-y-2"
                 onClick={() => {
-                  // Scroll to orders section
                   const ordersSection =
                     document.getElementById("orders-section");
                   if (ordersSection) {
@@ -450,7 +433,6 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>{" "}
-        {/* Recent Orders */}
         <Card id="orders-section">
           <CardHeader>
             <CardTitle>Recent Orders</CardTitle>
@@ -498,7 +480,6 @@ export default function Dashboard() {
                             order.status.slice(1)}
                         </Badge>
                       </div>
-                      {/* Cancel button for managers and admins */}
                       {user &&
                         canCancelOrder(user.role) &&
                         order.status !== "delivered" &&

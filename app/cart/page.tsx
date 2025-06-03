@@ -33,7 +33,6 @@ export default function CartPage() {
       alert("Only restaurant managers and admins can access checkout. Members can view their cart but cannot place orders.");
       return;
     }
-    // Redirect to checkout page
     router.push("/checkout");
   };
 
@@ -57,11 +56,9 @@ export default function CartPage() {
     };
 
     getUser();
-  }, [router]);
-  const totalPrice = getTotalPrice();
+  }, [router]);  const totalPrice = getTotalPrice();
   const totalItems = getTotalItems();
 
-  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
@@ -76,7 +73,7 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-neutral-50">
-        {/* Header */}
+        
         <header className="bg-white border-b border-neutral-200 px-6 py-4">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <div className="flex items-center space-x-4">
@@ -91,7 +88,7 @@ export default function CartPage() {
           </div>
         </header>
 
-        {/* Empty Cart */}
+        
         <main className="max-w-4xl mx-auto px-6 py-16 text-center">
           <div className="text-8xl mb-4">🛒</div>
           <h2 className="text-2xl font-bold text-neutral-900 mb-2">
@@ -110,7 +107,7 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
+      
       <header className="bg-white border-b border-neutral-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
@@ -136,10 +133,10 @@ export default function CartPage() {
         </div>
       </header>
 
-      {/* Main Content */}
+      
       <main className="max-w-4xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
+          
           <div className="lg:col-span-2 space-y-4">
             <h2 className="text-xl font-semibold text-neutral-900 mb-4">
               Order Items
@@ -163,7 +160,7 @@ export default function CartPage() {
                   </div>
 
                   <div className="flex flex-col items-end space-y-2">
-                    {/* Quantity Controls */}
+                    
                     <div className="flex items-center space-x-2">
                       <Button
                         size="sm"
@@ -189,12 +186,12 @@ export default function CartPage() {
                       </Button>
                     </div>
 
-                    {/* Item Total */}
+                    
                     <p className="text-lg font-bold text-neutral-900">
                       ${(item.price * item.quantity).toFixed(2)}
                     </p>
 
-                    {/* Remove Button */}
+                    
                     <Button
                       size="sm"
                       variant="outline"
@@ -209,7 +206,7 @@ export default function CartPage() {
             ))}
           </div>
 
-          {/* Order Summary */}
+          
           <div className="lg:col-span-1">
             <Card className="sticky top-4">
               <CardHeader>

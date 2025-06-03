@@ -3,7 +3,6 @@ import { dbConnect } from "@/lib/mongoose";
 import { User } from "@/lib/models/User";
 import { getAuthUser } from "@/lib/auth";
 
-// GET - Load saved payment information
 export async function GET(request: NextRequest) {
   try {
     const authUser = getAuthUser(request);
@@ -30,7 +29,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Save payment information
 export async function POST(request: NextRequest) {
   try {
     const authUser = getAuthUser(request);
@@ -38,10 +36,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { cardName, cardNumber, expiryDate, address, city, zipCode } = body;
+    const body = await request.json();    const { cardName, cardNumber, expiryDate, address, city, zipCode } = body;
 
-    // Validate required fields
     if (
       !cardName ||
       !cardNumber ||
@@ -56,7 +52,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Only store last 4 digits of card number for security
     const last4Digits = cardNumber.slice(-4);
 
     await dbConnect();
