@@ -5,7 +5,7 @@ import { Order } from "@/lib/models/Order";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ orderId: string }> }
+ { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
     const user = getAuthUser(req);
