@@ -5,7 +5,7 @@ import { Order } from "@/lib/models/Order";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
     const user = getAuthUser(req);
@@ -16,7 +16,8 @@ export async function GET(
 
     await dbConnect();
 
-    const order = await Order.findById(params.orderId);
+    const { orderId } = await params;
+    const order = await Order.findById(orderId);
 
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
