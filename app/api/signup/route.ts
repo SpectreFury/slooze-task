@@ -1,21 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/mongoose";
-import mongoose from "mongoose";
 import { hash } from "bcrypt";
-
-const UserSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-});
-
-const User = mongoose.models.User || mongoose.model("User", UserSchema);
+import { User } from "@/lib/models/User";
 
 export async function POST(req: NextRequest) {
   await dbConnect();
-  const { email, password } = await req.json();
-  if (!email || !password) {
+  const { firstName, lastName, email, password, role } = await req.json();
+
+  if (!email || !password || !firstName || !lastName) {
     return NextResponse.json(
-      { error: "Email and password are required." },
+      { error: "All the fields are required" },
       { status: 400 }
     );
   }
@@ -26,13 +20,24 @@ export async function POST(req: NextRequest) {
       { status: 409 }
     );
   }
-
   // Hash the password before saving
   const hashedPassword = await hash(password, 10);
 
-  const user = await User.create({ email, hashedPassword });
+  const user = await User.create({
+    firstName,
+    lastName,
+    email,
+    password: hashedPassword,
+    role: role || "member",
+  });
+
   return NextResponse.json({
     message: "User created",
-    user: { email: user.email },
+    user: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+    },
   });
 }
